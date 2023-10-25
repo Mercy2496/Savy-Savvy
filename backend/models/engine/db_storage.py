@@ -9,6 +9,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from models.base import BaseModel, Base
 from models.user import User
 from models.item import Item
+from models.uitem import UItem
 
 class DBStorage():
     """
@@ -53,6 +54,13 @@ class DBStorage():
 
         return users
 
+    def get_items_by_id(self, id=""):
+        """
+        returns the item asked
+        """
+        items = self.__session.query(Item).filter(Item.id == id).all()
+        return items
+
     def get_items_by_type(self, item=""):
         """
         returns the item asked
@@ -68,6 +76,34 @@ class DBStorage():
         items = self.__session.query(Item).all()
 
         return items
+
+    def get_all_uitems(self, get_all=False):
+        """
+        Returns all items
+        """
+        from models.ml.transformer import Transformer
+
+        uits = []
+        tsfm = Transformer()
+        unqs = tsfm.get_unique_items()
+
+        for unq in unqs:
+            # unq = unq.replace(" ", "+")
+            # print(unq)
+            if get_all is True:
+                items = self.__session.query(UItem).all()
+                return items
+            all_unqs = self.__session.query(UItem).filter(UItem.type == unq).all()
+            if len(all_unqs) > 1:
+                # print(f"--W--(WARN): ----{len(all_unqs)}")
+                pass
+            uits.append(all_unqs[0])
+
+        # print(its[0].to_dict())
+
+        # items = self.__session.query(UItem).all()
+
+        return uits
 
 
 

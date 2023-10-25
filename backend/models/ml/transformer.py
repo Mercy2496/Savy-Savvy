@@ -10,7 +10,7 @@ import json
 class Transformer():
     """
     """
-    all_items = ""
+    all_items = []
     iitem = ""
     main_df = pd.DataFrame()
 
@@ -18,7 +18,20 @@ class Transformer():
         """
         """
         self.iitem = Item()
-        self.all_items = self.iitem.get_all_items()
+        if args:
+            try:
+                # print(args)
+                for id in args[0]:
+                    item = self.iitem.get_item_by_id(id)
+                    if type(item) is list:
+                        self.all_items.append(item[0])
+                    else:
+                        self.all_items.append(item)
+            except Exception as e:
+                print(f"--E--({e})")
+                pass
+        else:
+            self.all_items = self.iitem.get_all_items()
         self.to_df(return_=False)
 
 
@@ -93,6 +106,12 @@ class Transformer():
         new_dict["nunique_price"] = df["price"].nunique()
 
         return new_dict
+
+    def get_unique_items(self):
+        """returns the unique items"""
+        df = self.main_df
+        items = list(df["type"].unique())
+        return items
 
     def summarize_items(self, items=[], get_dicts=False):
         """..."""

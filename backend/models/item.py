@@ -67,3 +67,12 @@ class Item(BaseModel, Base):
 
         items = Storage.get_all_items()
         return items
+
+    def get_item_by_id(self, id=""):
+        """returns an item of that id"""
+        from models.engine import Storage
+
+        items = Storage.get_items_by_id(id)
+        if len(items) > 1:
+            print("--W--(WARN): ----{len(all_unqs)}")
+        return items

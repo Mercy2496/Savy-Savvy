@@ -3,6 +3,8 @@
 from .jumia import Jumia
 from .scrape import Scrape
 from ..item import Item
+from ..ml.transformer import Transformer
+from ..uitem import UItem
 
 import requests, os
 
@@ -69,6 +71,8 @@ class Create_Item:
         """
         the magic hapens here
         """
+        id_list = []
+
         if url:
             self.url = url
         else:
@@ -89,7 +93,7 @@ class Create_Item:
                 if count == 0:
                     if "price" in list(data.keys()):
                         avg_prc = int(str(data["price"].split(" ")[1]).replace(",", ""))
-                if count == 2:
+                if count == 3:
                     if "image" in list(data.keys()):
                         if not os.path.exists("item_images"):
                             os.makedirs("item_images")
@@ -98,23 +102,20 @@ class Create_Item:
                         if response.status_code == 200:
                             with open(fl, "wb") as f:
                                 f.write(response.content)
-                            print(f"\t{count} Img saved in {fl}")
+                            print(f"Article: {count} Img saved in {fl}")
                         else:
                             print(f"--A--(ALERT): Requested img status code: {response.status_code}")
                 try:
-                    # print("**"*50)
-                    # print(data)
                     prc = int(str(data["price"].split(" ")[1]).replace(",", ""))
                     if prc < (avg_prc/2):
-                        # print(f"{count}: {prc}{'-'*50}")
-                        # print(data)
-                        # print("-"*50)
                         pass
                     else:
                         # print(data)
                         new_item = Item(**data)
                         new_item.save()
                         # print(f"{count}: {prc}{'=='*50}")
+                        id_list.append(new_item.id)
+
 
                 except Exception as e:
                     print(f"--E--(ERR): \n\t{e}")
@@ -123,3 +124,10 @@ class Create_Item:
                 # print("--A--(ABORT): Data does not meet requrements")
 
             count = count + 1
+
+        tfm = Transformer(id_list)
+
+        uitems = tfm.summarize_items(get_dicts=True)
+        for item in uitems:
+            ui = UItem(**item)
+            ui.save()

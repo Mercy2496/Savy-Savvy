@@ -9,6 +9,7 @@ sys.path.append("..")
 from models.base import BaseModel, Base
 from models.user import User
 from models.item import Item
+from models.uitem import UItem
 from models.tools.create import Create_Item
 from models import *
 
@@ -28,7 +29,7 @@ kwargs = {"first_name": "Luc",
 # lucys = User.get("wgdh", "uyeyfghdfj")
 # print(lucys)
 
-url = "https://www.jumia.co.ke/catalog/?q=honey"
+url = "https://www.jumia.co.ke/catalog/?q=tecno+spark+6"
 create = Create_Item(url)
 create.new()
 

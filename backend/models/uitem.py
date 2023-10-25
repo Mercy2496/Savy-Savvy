@@ -42,14 +42,14 @@ class UItem(BaseModel, Base):
             # print("="*40)
             super().__init__(*args, **new_kwargs)
 
-    def get_all_uitems(self):
+    def get_all_uitems(self, get_all=False):
         """
         returns all items in uitems table
         """
-        # from model.engine import Storage
+        from models.engine import Storage
 
-        # uitems = Storage.get_all_uitems()
-        # return uitems
-        pass
+        uitems = Storage.get_all_uitems(get_all=get_all)
+
+        return uitems
 
 

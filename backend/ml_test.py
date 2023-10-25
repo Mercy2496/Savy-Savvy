@@ -4,7 +4,7 @@ ml test
 """
 
 from models.ml.transformer import Transformer
-from models.uitems import UItem
+from models.uitem import UItem
 import os
 
 tfm = Transformer()
@@ -16,11 +16,16 @@ uitems = tfm.summarize_items(get_dicts=True)
 
 # print("="*30)
 # print(uitems[0])
-# ui = UItem(uitems[0])
+ui = UItem(uitems[0])
 # ui.save()
 
-for item in uitems[:1]:
-    # for key, val in item.items():
-    #     print(f"{key}: {val}: {type(val)}")
-    ui = UItem(**item)
-    ui.save()
+# for item in uitems:
+#     ui = UItem(**item)
+#     ui.save()
+
+uis = ui.get_all_uitems(get_all=True)
+print(len(uis))
+# for it in uis:
+#     print(it.to_dict())
+#     print("="*50)
+
