@@ -52,6 +52,12 @@ header div {
     object-fit: contain;
     /* border: 2px solid red; */
 }
+.logo img#not-ready {
+    box-shadow: 0px 10px 20px rgb(255, 10, 10);
+}
+.logo img#ready {
+    box-shadow: 0px 10px 20px greenyellow;
+}
 
 
 .actions button, .actions a {
@@ -75,3 +81,20 @@ header div {
     background-position: right;
 }
 
+div.logged-in {
+    width: 100px;
+    /* margin-left: 50px; */
+    /* border: 2px solid red; */
+    display: none;
+}
+div.logged-in img {
+    width: 80px;
+    border-radius: 50%;
+    border: 3px solid rgb(82, 110, 36);
+    margin: 5px;
+    transition: border 1s;
+}
+div.logged-in img:hover {
+    cursor: pointer;
+    border: 3px solid rgb(250, 0, 0);
+}

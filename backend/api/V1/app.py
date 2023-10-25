@@ -3,13 +3,13 @@
 ...
 """
 import sys
-sys.path.extend(["../", "../../"])
+sys.path.extend([".", "../", "../../", "../../../", "../../../../"])
 
-from models import *
+# from models import *
 from os import getenv
 from flask import Flask, render_template, make_response, jsonify
 from flask_cors import CORS
-from api.V1.endpoints import endpoints
+from api.v1.endpoints import endpoints
 
 
 app = Flask(__name__)

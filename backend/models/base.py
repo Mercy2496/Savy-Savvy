@@ -106,7 +106,8 @@ class BaseModel():
                     val = "********"
                 if key in ["email", "Email"]:
                     val = f"......@{val.split('@')[1]}"
-            new_dict[key] = val
+            if "_sa_instance_state" not in key:
+                new_dict[key] = val
         if self.confirm_io(new_dict, dict):
             return new_dict
 

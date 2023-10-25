@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search bar</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: rgb(57, 133, 219);
+        }
+        .search {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 60px;
+            transition: 0.5s;
+            box-shadow: 0 0 0 3px rgb(113, 255, 48);
+            overflow: hidden;
+        }
+
+        .search.active {
+            width: 360px;
+        }
+        .search .icon {
+            position: absolute;
+            /* top: 0; */
+            /* left: 0; */
+            right: 0;
+            width: 60px;
+            height: 60px;
+            background: red;
+            border-radius: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;;
+            cursor: pointer;
+        }
+        .search .icon::before {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border: 3px solid blue;
+            border-radius: 50%;
+            transform: translate(-4px, -4px);
+        }
+        .search .icon::after {
+            content: '';
+            position: absolute;
+            width: 3px;
+            height: 12px;
+            background: blue;
+            transform: translate(6px, 6px) rotate(315deg);
+        }
+        .search .input {
+            position: relative;
+            width: 370px;
+            height: 65px;
+            left: 5px;
+            /* right: 60px; */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 60px;
+        }
+        .search .input input {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            font-size: 18px;
+            padding: 10px;
+            border-radius: 50px;
+        }
+
+    </style>
+
+</head>
+<body>
+    <header></header>
+
+    <div class="search">
+        <div class="icon"></div>
+        <div class="input">
+            <input type="text" placeholder="Search" id="mysearch">
+        </div>
+    </div>
+
+    <footer></footer>
+
+    <script>
+        const icon = document.querySelector("div.icon");
+        const search = document.querySelector("div.search");
+
+        icon.onclick = function(){
+            search.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

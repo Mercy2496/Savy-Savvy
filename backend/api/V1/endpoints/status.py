@@ -2,7 +2,7 @@
 """
 Default status
 """
-from api.V1.endpoints import endpoints
+from api.v1.endpoints import endpoints
 from flask import jsonify
 
 @endpoints.route("/", strict_slashes=False, methods=["GET"])

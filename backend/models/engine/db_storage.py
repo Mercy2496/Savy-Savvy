@@ -7,6 +7,8 @@ import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from models.base import BaseModel, Base
+from models.user import User
+from models.item import Item
 
 class DBStorage():
     """
@@ -42,3 +44,30 @@ class DBStorage():
         """
         self.__session.add(obj)
         self.__session.commit()
+
+    def get_user_by_email(self, email=""):
+        """
+        Retruns a user give an email
+        """
+        users = self.__session.query(User).filter(User.email == email).all()
+
+        return users
+
+    def get_items_by_type(self, item=""):
+        """
+        returns the item asked
+        """
+        items = self.__session.query(Item).filter(Item.type == item).all()
+
+        return items
+
+    def get_all_items(self):
+        """
+        returns all items
+        """
+        items = self.__session.query(Item).all()
+
+        return items
+
+
+

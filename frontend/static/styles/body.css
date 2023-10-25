@@ -130,3 +130,43 @@ form input, form select {
     border-radius: 7px;
     background-color: #eafcd5;
 }
+
+div.success-popup {
+    width: 350px;
+    background-image: var(--gradient);
+    border-radius: 10px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.1);
+    text-align: center;
+    border: 3px solid rgb(83, 255, 83);
+    color: black;
+    visibility: hidden;
+    transition: transform 1s, top 0.1s;
+}
+div.open-popup {
+    visibility: visible;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(1);
+}
+div.success-popup img{
+    width: 130px;
+    margin-top: -50px;
+    border-radius: 50%;
+    box-shadow: 0 13px 20px black;
+}
+div.success-popup button {
+    padding: 10px;
+    width: 80px;
+    background-image: var(--abnornal_gradient);
+    background-size: 600%;
+    background-position: bottom;
+    transition: background-position 1s;
+    border-radius: 10px;
+    border: 1px solid rgb(0, 26, 255);
+    font-weight: bold;
+}
+div.success-popup button:hover {
+    background-position: right;
+}
