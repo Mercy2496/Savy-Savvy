@@ -77,6 +77,12 @@ class DBStorage():
 
         return items
 
+    def get_uitems_by_type(self, type=""):
+        """
+        """
+        all_unqs = self.__session.query(UItem).filter(UItem.type == type).all()
+        return all_unqs[0]
+
     def get_all_uitems(self, get_all=False):
         """
         Returns all items
@@ -97,7 +103,8 @@ class DBStorage():
             if len(all_unqs) > 1:
                 # print(f"--W--(WARN): ----{len(all_unqs)}")
                 pass
-            uits.append(all_unqs[0])
+            if all_unqs:
+                uits.append(all_unqs[0])
 
         # print(its[0].to_dict())
 

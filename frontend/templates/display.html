@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="../static/styles/common.css" />
     <link rel="stylesheet" href="../static/styles/display.css">
     <link rel="stylesheet" href="../static/styles/display_items.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
     <header class="default">
@@ -25,6 +26,7 @@
         </div>
         <div class="logged-in">
           <img src="../static/images/other.png">
+          <b id="user-name"></b>
         </div>
       </header>
 
@@ -33,32 +35,54 @@
         <div class="search">
           <section class="search">
               <form action="">
-                <select name="" id="">
+                <input id="item-input" type="text" placeholder="Add new item">
+                <button id="add-item" type="submit">Add</button>
+                <select name="" id="item-select">
                   {% for item in available_items %}
-                    <option value="">{{ item }}</option>
+                    <option value={{ item }}>{{ item }}</option>
                   {% endfor %}
                 </select>
                 <!-- <input type="text" placeholder="Search"> -->
-                <button type="submit">Search</button>
+                <button type="submit" id="search-item">Search</button>
+
+                <button type="submit" id="reset-item">Reset</button>
               </form>
           </section>
         </div>
 
         <div class="items">
-          <div class="filter">Filters
+          <div class="filter"><h2>Filters</h2>
+            <br>
             <div class="price-filter">
-              Filter Price by Range
-              <input type="text" name="min-price" placeholder="Min Price">
+              Filter by Category
+              <select name="" id="">
+                <option value="">electronics</option>
+                <option value="">utensils</option>
+                <option value="">Phones tables & laptops</option>
+              </select>
             </div>
           </div>
           <div class="item">
             {% for item in items %}
               <article class="-item">
-                <a href="">
-                  <img src="../static/item_images/{{ (item.type).replace(' ', ' ') }}.jpg" alt="">
+                <a href="http://127.0.0.1:5000/display/{{ (item.type).replace(' ', '+') }}">
+                  <img src="../static/item_images/{{ (item.type).replace(' ', '+') }}.jpg" alt="">
                   <div class="info">
-                    <h3>{{ item.name }}</h3>
-                    <h4>{{ item.price }}</h4>
+                    <h3>{{ item.type }}</h3>
+
+                    {% macro get_price(price) %}
+                      {% set price_str = price | string %}
+                      {% set len_p = price_str | length %}
+                      {% if len_p > 3 %}
+                          {% set new_price = price_str[:-(3)] ~ ',' ~ price_str[-3:] %}
+                      {% else %}
+                          {% set new_price = price_str %}
+                      {% endif %}
+                      {{ new_price }}
+                    {% endmacro %}
+
+                    <h4>ksh {{ get_price(item.min_price) }} - Ksh {{ get_price(item.max_price) }}</h4>
+
                     {% macro custom_round(value) %}
                       {{ value | int | round }}
                     {% endmacro %}
@@ -66,57 +90,28 @@
                     {% macro get_time(tm1, tm2) %}
                       {% set tm_diff = (tm1 - tm2) %}
                       {% set days = (tm_diff.days) %}
-                      {% set hours = (tm1.hour - tm2.hour) %}
+                      {% set hours = custom_round(tm_diff.seconds/3600) %}
                       {% set minutes = custom_round((tm_diff.seconds/60)%60) %}
-                      {{ days }} Days {{ hours }} Hrs {{ minutes }} Mins 
+                      {{ days }} days {{ hours }} hrs {{ minutes }} mins
                     {% endmacro %}
+
                     <p>
-                      {{ get_time(time, item.updated_at) }} Ago
+                      {{ get_time(time, item.latest_update) }} Ago
                     </p>
                   </div>
                 </a>
               </article>
             {% endfor %}
-            <article class="-item">
+            <!-- <article class="-item">
               <a href="">
-                <img src="../static/item_images/huawei+y6.jpg" alt="">
+                <img src="../static/images/poisonous_flame.gif" alt="">
                 <div class="info">
-                  <h3>Jiko Koa</h3>
-                  <h4>Ksh 4,000</h4>
-                  <p>3 day ago</p>
+                  <h3>Poisonous Flame</h3>
+                  <h4>Ksh 0 (Free)</h4>
+                  <p>0 sec Ago</p>
                 </div>
               </a>
-            </article>
-            <article class="-item">
-              <a href="">
-                <img src="../static/images/spikes.jpeg" alt="">
-                <div class="info">
-                  <h3>Jiko Koa</h3>
-                  <h4>Ksh 4,000</h4>
-                  <p>3 day ago</p>
-                </div>
-              </a>
-            </article>
-            <article class="-item">
-              <a href="">
-                <img src="../static/images/spikes.jpeg" alt="">
-                <div class="info">
-                  <h3>Jiko Koa</h3>
-                  <h4>Ksh 4,000</h4>
-                  <p>3 day ago</p>
-                </div>
-              </a>
-            </article>
-            <article class="-item">
-              <a href="">
-                <img src="../static/images/spikes.jpeg" alt="">
-                <div class="info">
-                  <h3>Jiko Koa</h3>
-                  <h4>Ksh 4,000</h4>
-                  <p>3 day ago</p>
-                </div>
-              </a>
-            </article>
+            </article> -->
 
           </div>
         </div>
@@ -124,7 +119,9 @@
       </div>
 
 
-      <!-- <script src="../static/scripts/start.js"></script> -->
-      <!-- <script src="../static/scripts/start.js"></script> -->
+      <script src="../static/scripts/common.js"></script>
+      <script src="../static/scripts/display.js"></script>
+      <script src="../static/scripts/login.js"></script>
   </body>
 </html>
+

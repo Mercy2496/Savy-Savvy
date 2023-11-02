@@ -4,8 +4,13 @@ This class Transforms the data from the item table
 """
 import pandas as pd
 from models.item import Item
+from models.uitem import UItem
 from datetime import datetime
-import json
+import seaborn as sbn
+import matplotlib.pyplot as plt
+import json, os, sys
+
+sns = sbn
 
 class Transformer():
     """
@@ -19,21 +24,25 @@ class Transformer():
         """
         self.iitem = Item()
         if args:
-            try:
-                # print(args)
-                for id in args[0]:
-                    item = self.iitem.get_item_by_id(id)
-                    if type(item) is list:
-                        self.all_items.append(item[0])
-                    else:
-                        self.all_items.append(item)
-            except Exception as e:
-                print(f"--E--({e})")
-                pass
+            if type(args[0]) is list:
+                try:
+                    for id in args[0]:
+                        item = self.iitem.get_item_by_id(id)
+                        if type(item) is list:
+                            self.all_items.append(item[0])
+                        else:
+                            self.all_items.append(item)
+                except Exception as e:
+                    print(f"--E--({e})")
+                    pass
+            else:
+                print("--A--(ALERT): Expected a list of ids for (currently saved items)")
         else:
             self.all_items = self.iitem.get_all_items()
         self.to_df(return_=False)
 
+        if not os.path.exists("figures"):
+            os.makedirs("figures")
 
     def to_df(self, return_=True):
         """
@@ -63,6 +72,7 @@ class Transformer():
             df['price'] = df['price'].str.split('-').str[0].str.split(' ').str[1].str.replace(',', '').astype('int32')
         except Exception as e:
             print(f"--E--(ERR): While extracting the price: {e}")
+
         return df
 
     def get_item_df(self, col=""):
@@ -131,3 +141,28 @@ class Transformer():
             new_df = pd.DataFrame(item_list)
 
         return new_df
+
+    def clean_df_2(self, df):
+        """cleans and typecasts the dates columns"""
+        for col in list(df.columns):
+            if "update"in col or "at" in col:
+                try:
+                    df[col] = pd.to_datetime(df[col])
+                except Exception as e:
+                    print(f"--E--(ERR): While converting date cols to pd.datetime: {e}")
+        return df
+
+    def get_uitem_df(self, *args, **kwargs):
+        """
+        gets all data from the UItem table and transforms it to df
+        """
+        uit = UItem()
+        uit_list = []
+        uit_objs = uit.get_all_uitems(get_all=True)
+        for obj in uit_objs:
+            uit_list.append(obj.to_dict())
+        new_df = pd.DataFrame(uit_list)
+        clean_df = self.clean_df_2(new_df)
+
+        return clean_df
+

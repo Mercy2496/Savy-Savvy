@@ -16,7 +16,7 @@ app = Flask(__name__)
 app.register_blueprint(endpoints)
 
 CORS(app)
-# cors = CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
+cors = CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
 
 
 

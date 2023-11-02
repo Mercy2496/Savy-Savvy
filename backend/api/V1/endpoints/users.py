@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+"""user endpoint"""
+
 from models.user import User
 from api.v1.endpoints import endpoints
 from flask import abort, jsonify, make_response, request

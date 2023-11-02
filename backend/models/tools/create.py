@@ -17,17 +17,17 @@ class Create_Item:
     def __init__(self, *args, **kwargs):
         """Initialization"""
         if args:
-            for arg in args:
-                self.url = arg
-                break
+            self.url = args[0]
         if kwargs:
             for key, val in kwargs.items():
                 if key == "url":
                     self.url = val
                     break
         if not self.url:
-            print("--A--(ABORT): No url Provided Aborting...")
-            return
+            print("--WARN--(WARN): No url Provided While instatiating")
+        if not os.path.exists("item_images"):
+            os.makedirs("item_images")
+
 
     def validate_data(self, data):
         val_state = ""
@@ -63,7 +63,7 @@ class Create_Item:
 
                 return new_data
             else:
-                print(f"--A--(ALERT): Data does not meet requrements: {data}")
+                # print(f"--A--(ALERT): Data does not meet requrements: {data}")
                 return False
 
 
@@ -86,7 +86,6 @@ class Create_Item:
         scrape = Scrape(content)
         articles = scrape.get_articles()
         for article in articles:
-            # print(f"++++ : Len of article {len(article)}")
             data = scrape.get_data(article)
             data = self.validate_data(data)
             if data:
@@ -95,8 +94,6 @@ class Create_Item:
                         avg_prc = int(str(data["price"].split(" ")[1]).replace(",", ""))
                 if count == 3:
                     if "image" in list(data.keys()):
-                        if not os.path.exists("item_images"):
-                            os.makedirs("item_images")
                         fl = f"/mnt/c/GIT/SIZ/Savy-Savvy/frontend/static/item_images/{data['type']}.jpg"
                         response = requests.get(data["image"])
                         if response.status_code == 200:
@@ -116,17 +113,15 @@ class Create_Item:
                         # print(f"{count}: {prc}{'=='*50}")
                         id_list.append(new_item.id)
 
-
                 except Exception as e:
                     print(f"--E--(ERR): \n\t{e}")
             else:
                 pass
-                # print("--A--(ABORT): Data does not meet requrements")
 
             count = count + 1
 
         tfm = Transformer(id_list)
-
+        
         uitems = tfm.summarize_items(get_dicts=True)
         for item in uitems:
             ui = UItem(**item)

@@ -52,4 +52,11 @@ class UItem(BaseModel, Base):
 
         return uitems
 
+    def get_uitems(self, item=""):
+        """returns the unique uitem"""
+        from models.engine import Storage
+
+        uitem = Storage.get_uitems_by_type(item)
+        return uitem
+
 

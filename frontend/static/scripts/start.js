@@ -1,38 +1,23 @@
 
-function apiGetReady(){
-    const url = "http://127.0.0.1:5005/api/v1/"
-
-    fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-            var key = Object.keys(data);
-            const logo = document.querySelector(".logo img")
-            if (data[key] == "SUCCESS") {
-                // console.log(logo);
-                logo.id = "ready";
-                console.log("API: ", data[key]);
-            }
-            else {
-                logo.id = "not-ready";
-                console.log("API: ", "FAILED");
-            }
-        })
-        .catch(error => {
-            console.log("API: ", "FAILED");
-            console.log("Error:", error);
-        });
-}
-apiGetReady();
-
-
-const signInData = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    age: 0,
-    gender: "",
-    pwd: "******",
-    signed: false,
+// const signInData = {
+//     firstName: "",
+//     lastName: "",
+//     email: "",
+//     age: 0,
+//     gender: "",
+//     pwd: "******",
+//     signed: false,
+//     timestamp: new Date().getTime()
+// }
+function getCookie(name) {
+    const cookies = document.cookie.split('; ');
+    for (const cookie of cookies) {
+        const [cookieName, cookieValue] = cookie.split('=');
+        if (cookieName === name) {
+            return cookieValue;
+        }
+    }
+    return null;
 }
 
 const redSignIn = document.querySelector("div.accounts");
@@ -51,13 +36,36 @@ const startLink = document.getElementById('startLink');
 
 function start() {
     // console.log(startButton);
-    if (signInData.signed === true) {
+    var signed = getCookie('signed') === 'true';
+    const timeSession = getCookie('timestamp');
+    const currentTimestamp = new Date().getTime();
+    // check the currentTimestamp - timeSession if its > 5 mins  di something
+    if (signed === true) {
         // alert("signed in");
+        if (timeSession) {
+            const timeSessionNumber = parseFloat(timeSession);
+            const timeDifference = currentTimestamp - timeSessionNumber;
+            // 300000 =  5 mins
+            if (timeDifference > 300000) {
+                document.cookie = `signed=${false}`;
+                // signed = false;
+                console.log('Session expired. Logging out...');
+                // start()
+            }
+            else {
+                console.log('Session is up and running');
+            }
+        } else {
+            console.log('timeSession cookie is not set.\n Setting it up');
+            var nw =  new Date().getTime()
+            document.cookie = `timestamp=${nw}`;
+        }
+
         startButton.textContent = "Explore";
         window.location.href = "http://127.0.0.1:5000/display";
     }
     else {
-        // alert("sign in page");
+        // alert("sign in Please");
         startButton.style.display = 'none';
         signInChoice.style.display = 'block';
         signIn.addEventListener('click', function(event) {
@@ -137,22 +145,32 @@ function start() {
             signInChoice.style.display = 'none';
             // createAccountForm.style.display = 'block';
             startButton.style.display = 'block';
-            signInData.signed = true;
+            document.cookie = `signed=${true}`;
         });
     }
 }
 
 function signingIn() {
+    const signInData = {
+        firstName: "",
+        lastName: "",
+        email: "",
+        age: 0,
+        gender: "",
+        pwd: "******",
+        signed: false,
+        timestamp: new Date().getTime()
+    }
     signInfo = {}
     signInForm.addEventListener('submit', function(event) {
         event.preventDefault();
         const username = document.getElementById("username").value;
         const password = document.getElementById("pwd").value;
-        console.log(`Name: ${username}\nPwd: ${password}`);
+        // console.log(`Name: ${username}\nPwd: ${password}`);
         // from here make GET request to api
         signInfo["email"] = username;
         signInfo["password"] = password;
-        console.log(signInfo);
+        // console.log(signInfo);
         // alert("Signing in now!");
         url = "http://127.0.0.1:5005/api/v1/user"
 
@@ -186,11 +204,20 @@ function signingIn() {
                 signInData.email = data["email"];
                 signInData.gender = data["gender"]
                 signInData.signed = true;
+
+                // set signin cookies to the broswer using SignInData
+                document.cookie = `firstName=${signInData.firstName}`;
+                document.cookie = `lastName=${signInData.lastName}`;
+                document.cookie = `email=${signInData.email}`;
+                document.cookie = `gender=${signInData.gender}`;
+                document.cookie = `signed=${signInData.signed ? 'true' : 'false'}`;
+                document.cookie = `timestamp=${signInData.timestamp}`;
+
                 startButton.textContent = "Explore";
 
-                console.log(redSignIn);
-                console.log(user);
-                console.log(userLogo);
+                // console.log(redSignIn);
+                // console.log(user);
+                // console.log(userLogo);
                 redSignIn.style.display = "none";
                 if (["male", "Male"].includes(signInData.gender)) {
                     userLogo.src = "../static/images/male-acc";
@@ -204,6 +231,7 @@ function signingIn() {
                 else {
                     userLogo.src = "../static/images/other.png"
                 }
+                userLogo.style.display = "block";
                 user.style.display = "inline-block";
                 signInForm.style.display = "none";
                 startButton.style.display = "block";

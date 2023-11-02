@@ -73,6 +73,31 @@ class Jumia:
         except Exception as e:
             print(f"--E--(ERR): While saving Content in {path}\n{e}")
 
+    def extract_dt(self, path):
+        """
+        takes the html path then extracts the date
+        """
+        fmt = "%Y-%m-%d %H:%M:%S.%f"
+        date = False
+
+        dts = path.split("\\")[-1].split("_")[1:]
+
+        if len(dts) == 2:
+            t = str(dts[-1].split(".")[0]).replace("-", ":")
+            dt = f"{dts[0]} {t}.007"
+        else:
+            t = str(dts[-1].split(".")[0]).replace("-", ":")
+            dt = f"{dts[0]} {t}.00"
+            print(f"--A--(ALERT): Am having issues while extracting the date from the html path {dts} => {dt}")
+
+        try:
+            date = datetime.datetime.strptime(dt, fmt)
+            return date
+        except Exception as e:
+            print(f"--E--(ERR): The str {dt} could not be converted to datetime: {e}")
+
+        return date
+
     def confirm_item(self, item=""):
         """checks for item requests before making another one"""
 
@@ -83,10 +108,38 @@ class Jumia:
                 if item in file:
                     found_request.append(file)
         if len(found_request) > 0:
-            print(f"--FND--(FOUND): No need to Request \n File: {found_request[0]}")
+            latest = found_request[0]
             if len(found_request) > 1:
-                print(f"--A--(ALERT): Found multiple content of same item \n Files:{found_request}")
-            return found_request[0]
+                print(f"--A--(ALERT): Found multiple content of same item => Files:{found_request}\n\tExtracting the latest...", end="")
+                today = datetime.datetime.now()
+                dts = "2023-09-20 21:37:16.007000"
+                fmt = "%Y-%m-%d %H:%M:%S.%f"
+                default_Latest_date = datetime.datetime.strptime(dts, fmt)
+                latest_date = today - default_Latest_date
+                for fl in found_request:
+                    date = self.extract_dt(fl)
+                    diff = (today - date)
+                    if diff < latest_date:
+                        latest_date = diff
+                        latest = fl
+                print(f"\t=> {latest}")
+
+            path = latest
+            date = self.extract_dt(path)
+            now = datetime.datetime.now()
+            diff = (now - date)
+            days = diff.days
+            if days >= 1:
+                print(f"--FND--(FOUND): But Its {days} old (Deleting the old one) => File: {path}")
+                try:
+                    file_path = f"{self.web_dir}/{path}"
+                    os.remove(file_path)
+                except Exception as e:
+                    print(f"--A--(ALERT): filed to delete the old one: {e}")
+                return False
+            else:
+                print(f"--FND--(FOUND): No need to Request => File: {found_request[0]}")
+                return found_request[0]
         else:
             return False
 
